@@ -1,26 +1,213 @@
 @import "tailwindcss";
 
+/* ───────────────────────────────────────────────
+   Design tokens — taken straight from an Assamese home:
+   cotton gamosa, red weave, muga silk, tea leaf, Luit water, ink.
+   ─────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #f4ead6;
+  --paper-2: #ebdcbf;
+  --cotton: #fbf6ea;
+  --ink: #1d1611;
+  --ink-2: #4a3d33;
+  --red: #b3141f;
+  --red-deep: #7c0d14;
+  --muga: #c4902f;
+  --muga-light: #e9c47a;
+  --leaf: #23472a;
+  --leaf-light: #3f7a47;
+  --luit: #12333f;
+  --luit-light: #2b6577;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-cotton: var(--cotton);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-red: var(--red);
+  --color-red-deep: var(--red-deep);
+  --color-muga: var(--muga);
+  --color-muga-light: var(--muga-light);
+  --color-leaf: var(--leaf);
+  --color-leaf-light: var(--leaf-light);
+  --color-luit: var(--luit);
+  --color-luit-light: var(--luit-light);
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-serif), Georgia, serif;
+  --font-axom: var(--font-axomiya), var(--font-display-serif), serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  overflow-x: clip;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--red);
+  color: var(--cotton);
+}
+
+/* Paper grain over everything, like an old Assamese Pratidin page */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.09;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 0 0.1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── The gamosa weave: white cotton, red bars, red phul (flower) motif ── */
+.gamosa-band {
+  background-color: var(--cotton);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='40' viewBox='0 0 56 40'%3E%3Crect width='56' height='3' y='3' fill='%23b3141f'/%3E%3Crect width='56' height='3' y='34' fill='%23b3141f'/%3E%3Crect width='56' height='1' y='8' fill='%23b3141f'/%3E%3Crect width='56' height='1' y='31' fill='%23b3141f'/%3E%3Cpath d='M28 12 L36 20 L28 28 L20 20 Z' fill='%23b3141f'/%3E%3Cpath d='M28 16 L32 20 L28 24 L24 20 Z' fill='%23fbf6ea'/%3E%3Crect x='27' y='19' width='2' height='2' fill='%23b3141f'/%3E%3Cpath d='M6 20 L10 16 L14 20 L10 24 Z' fill='%23b3141f'/%3E%3Cpath d='M42 20 L46 16 L50 20 L46 24 Z' fill='%23b3141f'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: 0 center;
+  background-size: 56px 40px;
+}
+.gamosa-band-thin {
+  background-color: var(--cotton);
+  background-image:
+    linear-gradient(var(--red), var(--red)),
+    linear-gradient(var(--red), var(--red));
+  background-size: 100% 3px, 100% 1px;
+  background-position: 0 3px, 0 calc(100% - 3px);
+  background-repeat: no-repeat;
+}
+.gamosa-run {
+  animation: gamosa-run 18s linear infinite;
+}
+@keyframes gamosa-run {
+  to { background-position: 560px center; }
+}
+
+/* ── Inline Assamese word with hover / tap translation ── */
+.ax {
+  position: relative;
+  display: inline;
+  cursor: help;
+  font-style: italic;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  outline: none;
+}
+.ax-tip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translate(calc(-50% + var(--shift, 0px)), 6px);
+  min-width: 11rem;
+  max-width: 16rem;
+  padding: 0.65rem 0.85rem 0.7rem;
+  border-radius: 0.6rem;
+  background: var(--ink);
+  color: var(--cotton);
+  font-style: normal;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 40;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  box-shadow: 0 12px 30px -10px rgb(0 0 0 / 0.45);
+}
+.ax-tip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: calc(50% - var(--shift, 0px));
+  margin-left: -6px;
+  border: 6px solid transparent;
+  border-top-color: var(--ink);
+}
+.ax:hover .ax-tip,
+.ax:focus .ax-tip,
+.ax:focus-visible .ax-tip {
+  opacity: 1;
+  transform: translate(calc(-50% + var(--shift, 0px)), 0);
+}
+
+/* ── Marquee ── */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 40s linear infinite;
+}
+.marquee:hover { animation-play-state: paused; }
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+/* ── Steam from a cup of lal sah ── */
+.steam path {
+  stroke-dasharray: 60;
+  animation: steam 3.2s ease-in-out infinite;
+}
+.steam path:nth-child(2) { animation-delay: 0.6s; }
+.steam path:nth-child(3) { animation-delay: 1.2s; }
+@keyframes steam {
+  0% { stroke-dashoffset: 60; opacity: 0; }
+  40% { opacity: 0.8; }
+  100% { stroke-dashoffset: -60; opacity: 0; }
+}
+
+/* ── River waves ── */
+.wave-drift { animation: wave-drift 12s linear infinite; }
+.wave-drift-slow { animation: wave-drift 20s linear infinite reverse; }
+@keyframes wave-drift {
+  to { transform: translateX(-50%); }
+}
+
+/* ── Dhol bounce ── */
+.dhol-beat { animation: dhol 0.55s ease-in-out infinite alternate; }
+@keyframes dhol {
+  from { transform: translateY(0) rotate(-3deg); }
+  to { transform: translateY(-6px) rotate(3deg); }
+}
+
+/* ── Meji fire flicker ── */
+.flicker { animation: flicker 1.4s ease-in-out infinite alternate; transform-origin: bottom center; }
+@keyframes flicker {
+  0% { transform: scaleY(1) skewX(0deg); opacity: 0.95; }
+  50% { transform: scaleY(1.08) skewX(-3deg); opacity: 1; }
+  100% { transform: scaleY(0.94) skewX(3deg); opacity: 0.9; }
+}
+
+.text-outline {
+  -webkit-text-stroke: 1.5px currentColor;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Tooltip underline on dark / red surfaces */
+.bg-red .ax,
+.bg-ink .ax,
+.bg-luit .ax,
+.bg-red-deep .ax {
+  text-decoration-color: var(--muga-light);
 }
